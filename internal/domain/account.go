@@ -44,12 +44,6 @@ func (a *Account) AddBalance(amount float64) {
 	a.balance += amount
 }
 
-func (a *Account) SubtractBalance(amount float64) {
-	a.balanceMu.Lock()
-	defer a.balanceMu.Unlock()
-	a.balance -= amount
-}
-
 func (a *Account) GetBalance() float64 {
 	a.balanceMu.RLock()
 	defer a.balanceMu.RUnlock()
