@@ -20,6 +20,12 @@ type Account struct {
 	UpdatedAt time.Time
 }
 
+func GenerateAPIKey() string {
+	b := make([]byte, 16)
+	rand.Read(b)
+	return hex.EncodeToString(b)
+}
+
 func NewAccount(username, email string) *Account {
 	return &Account{
 		ID:        uuid.New().String(),
@@ -28,14 +34,8 @@ func NewAccount(username, email string) *Account {
 		balance:   0,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
-		APIKey:    generateAPIKey(),
+		APIKey:    GenerateAPIKey(),
 	}
-}
-
-func generateAPIKey() string {
-	b := make([]byte, 16)
-	rand.Read(b)
-	return hex.EncodeToString(b)
 }
 
 func (a *Account) AddBalance(amount float64) {
