@@ -1,7 +1,9 @@
 package domain
 
 import (
-	"errors"
+	"crypto/rand"
+	"encoding/hex"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -12,7 +14,8 @@ type Account struct {
 	Username  string
 	Email     string
 	APIKey    string
-	Balance   float64
+	balance   float64
+	balanceMu sync.Mutex
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
@@ -22,28 +25,27 @@ func NewAccount(username, email string) *Account {
 		ID:        uuid.New().String(),
 		Username:  username,
 		Email:     email,
-		Balance:   0,
+		balance:   0,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
+		APIKey:    generateAPIKey(),
 	}
 }
 
-func (a *Account) Validate() error {
-	if a.Username == "" {
-		return errors.New("username is required")
-	}
-	if a.Email == "" {
-		return errors.New("email is required")
-	}
-	if a.APIKey == "" {
-		return errors.New("api key is required")
-	}
-	if a.Balance < 0 {
-		return errors.New("balance cannot be negative")
-	}
-	return nil
+func generateAPIKey() string {
+	b := make([]byte, 16)
+	rand.Read(b)
+	return hex.EncodeToString(b)
 }
 
-func (a *Account) GenerateAPIKey() string {
-	return uuid.New().String()
+func (a *Account) AddBalance(amount float64) {
+	a.balanceMu.Lock()
+	defer a.balanceMu.Unlock()
+	a.balance += amount
+}
+
+func (a *Account) SubtractBalance(amount float64) {
+	a.balanceMu.Lock()
+	defer a.balanceMu.Unlock()
+	a.balance -= amount
 }
