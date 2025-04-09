@@ -15,7 +15,7 @@ type Account struct {
 	Email     string
 	APIKey    string
 	balance   float64
-	balanceMu sync.Mutex
+	balanceMu sync.RWMutex
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
@@ -48,4 +48,16 @@ func (a *Account) SubtractBalance(amount float64) {
 	a.balanceMu.Lock()
 	defer a.balanceMu.Unlock()
 	a.balance -= amount
+}
+
+func (a *Account) GetBalance() float64 {
+	a.balanceMu.RLock()
+	defer a.balanceMu.RUnlock()
+	return a.balance
+}
+
+func (a *Account) SetBalance(balance float64) {
+	a.balanceMu.Lock()
+	defer a.balanceMu.Unlock()
+	a.balance = balance
 }
