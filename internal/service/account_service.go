@@ -7,6 +7,7 @@ import (
 	"github.com/RamiroCyber/gateway-go/internal/constants"
 	"github.com/RamiroCyber/gateway-go/internal/domain"
 	"github.com/RamiroCyber/gateway-go/internal/dto"
+	"github.com/RamiroCyber/gateway-go/internal/repository"
 )
 
 var (
@@ -14,10 +15,10 @@ var (
 )
 
 type AccountService struct {
-	repository domain.AccountRepository
+	repository *repository.AccountRepository
 }
 
-func NewAccountService(repository domain.AccountRepository) *AccountService {
+func NewAccountService(repository *repository.AccountRepository) *AccountService {
 	return &AccountService{repository: repository}
 }
 

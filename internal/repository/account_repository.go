@@ -78,10 +78,10 @@ func (r *AccountRepository) UpdateBalance(account *domain.Account) error {
 
 	var currentBalance float64
 	err = tx.QueryRow("SELECT balance FROM accounts WHERE id = $1 FOR UPDATE", account.ID).Scan(&currentBalance)
-	if err != sql.ErrNoRows {
-		return domain.ErrAccountNotFound
-	}
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return domain.ErrAccountNotFound
+		}
 		return err
 	}
 
@@ -91,4 +91,10 @@ func (r *AccountRepository) UpdateBalance(account *domain.Account) error {
 	}
 
 	return tx.Commit()
+}
+
+func (r *AccountRepository) Update(account *domain.Account) error {
+	_, err := r.db.Exec("UPDATE accounts SET username = $1, email = $2, updated_at = $3 WHERE id = $4",
+		account.Username, account.Email, time.Now(), account.ID)
+	return err
 }
