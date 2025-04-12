@@ -36,9 +36,10 @@ func main() {
 	repo := repository.NewAccountRepository(db)
 	accountService := service.NewAccountService(repo)
 
-	server := server.NewServer(accountService, envConfig.Get("PORT"))
-	if err := server.Start(); err != nil {
+	newServer := server.NewServer(accountService, envConfig.Get("PORT"))
+	if err := newServer.Start(); err != nil {
 		log.Fatal("Error starting server:", err)
 	}
-	log.Println("Server started on port", envConfig.Get("PORT"))
+	log.Println("Server successfully started!")
+
 }
